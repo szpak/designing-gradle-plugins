@@ -62,7 +62,7 @@
    <div id="preamble"> 
     <div class="sectionbody"> 
      <div class="paragraph"> 
-      <p>For beginners to Gradle implementing plugins can look like a daunting task that includes many considerations and deep knowledge: organizing and structuring plugin logic, testing and debugging plugin code as well as publishing the plugin artifact to a repository for consumption. You can find answers to many of those questions in the <a href="https://gradle.org/docs#getting-started">getting started guides for plugin development</a>.</p> 
+      <p>For beginners to Gradle implementing plugins can look like a daunting task that includes many considerations and deep knowledge: organizing and structuring plugin logic, testing and debugging plugin code as well as publishing the plugin artifact to a repository for consumption. You can find answers to many of those questions in the <a href="https://gradle.org/docs#getting-started">Getting Started Guides for plugin development</a>.</p> 
      </div> 
      <div class="paragraph"> 
       <p>This guide is the first installment of a series of topical guides with deep coverage on various aspects of Gradle plugin development. You will learn how to properly design Gradle plugins based on established practices and apply them to your own projects.</p> 
@@ -77,7 +77,7 @@
       </ul> 
      </div> 
      <div class="paragraph"> 
-      <p>If you happen to be a beginner to Gradle please start by working through the <a href="https://gradle.org/docs#getting-started">getting started guides on Gradle development</a> first while referencing the <a href="https://docs.gradle.org/current/userguide/userguide.html">Gradle user guide</a> to go deeper.</p> 
+      <p>If you happen to be a beginner to Gradle please start by working through the <a href="https://gradle.org/docs#getting-started">Getting Started Guides on Gradle development</a> first while referencing the <a href="https://docs.gradle.org/current/userguide/userguide.html">Gradle User Manual</a> to go deeper.</p> 
      </div> 
     </div> 
    </div> 
@@ -87,7 +87,7 @@
      <div class="sect2"> 
       <h3 id="reusable_logic_should_be_written_as_binary_plugin"><a class="anchor" href="#reusable_logic_should_be_written_as_binary_plugin"></a>1.1. Reusable logic should be written as binary plugin</h3> 
       <div class="paragraph"> 
-       <p>The Gradle user guide differentiates two types of plugins: <a href="https://docs.gradle.org/current/userguide/plugins.html#sec:types_of_plugins">script plugins and binary plugins</a>. Script plugins are basically just plain old Gradle build scripts with a different name. While script plugins have their place for organizing build logic in a Gradle project, it’s hard to keep them well-maintained, they are hard to test and you can’t define new reusable types in them.</p> 
+       <p>The Gradle User Manual differentiates two types of plugins: <a href="https://docs.gradle.org/current/userguide/plugins.html#sec:types_of_plugins">script plugins and binary plugins</a>. Script plugins are basically just plain old Gradle build scripts with a different name. While script plugins have their place for organizing build logic in a Gradle project, it’s hard to keep them well-maintained, they are hard to test and you can’t define new reusable types in them.</p> 
       </div> 
       <div class="paragraph"> 
        <p><a href="https://docs.gradle.org/current/userguide/plugins.html#sec:binary_plugins">Binary plugins</a> should be used whenever logic needs to be reused or shared across independent projects. They allow for properly structuring code into classes and packages, are cachable, can follow a versioning scheme to enable smooth upgrade procedures and are easily testable.</p> 
@@ -144,12 +144,12 @@ serverPlugin {
        <p>The functionality brought in by a plugin can be extremely powerful but also very opinionated. That’s especially the case if a plugin predefines tasks and conventions that a project inherits automatically when applying it. Sometimes the reality that you - as plugin developer - chose for your users might simply look different than expected. For that very reason you need to make a plugin as flexible and configurable as possible.</p> 
       </div> 
       <div class="paragraph"> 
-       <p>One way to provide these quality criteria is to separate capabilities from conventions. In practice that means separating general-purpose functionality from pre-configured, opinionated functionality. Let’s have a look at an example to explain this seemingly abstract concept. There are two Gradle core plugins that demonstrate the concept perfectly: the <a href="https://docs.gradle.org/current/userguide/standard_plugins.html#sec:base_plugins">Java base plugin</a> and the <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Java plugin</a>.</p> 
+       <p>One way to provide these quality criteria is to separate capabilities from conventions. In practice that means separating general-purpose functionality from pre-configured, opinionated functionality. Let’s have a look at an example to explain this seemingly abstract concept. There are two Gradle core plugins that demonstrate the concept perfectly: the <a href="https://docs.gradle.org/current/userguide/standard_plugins.html#sec:base_plugins">Java Base plugin</a> and the <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Java plugin</a>.</p> 
       </div> 
       <div class="ulist"> 
        <ul> 
-        <li> <p>The Java base plugin just provided un-opinionated functionality and general purpose concepts. For example it formalized the concept of a SourceSet and introduces dependency management configurations. However, it doesn’t actually create tasks you’d use as a Java developer on a regular basis nor does it create instances of source set.</p> </li> 
-        <li> <p>The Java plugin applies the Java base plugin internally and inherits all its functionality. On top it creates source set instances like <code>main</code> and <code>test</code>, creates tasks well-known to Java developers like <code>classes</code>, <code>jar</code> or <code>javadoc</code>. It also establishes a lifecycle between those tasks that make sense for the domain.</p> </li> 
+        <li> <p>The Java Base plugin just provided un-opinionated functionality and general purpose concepts. For example it formalized the concept of a SourceSet and introduces dependency management configurations. However, it doesn’t actually create tasks you’d use as a Java developer on a regular basis nor does it create instances of source set.</p> </li> 
+        <li> <p>The Java plugin applies the Java Base plugin internally and inherits all its functionality. On top it creates source set instances like <code>main</code> and <code>test</code>, creates tasks well-known to Java developers like <code>classes</code>, <code>jar</code> or <code>javadoc</code>. It also establishes a lifecycle between those tasks that make sense for the domain.</p> </li> 
        </ul> 
       </div> 
       <div class="imageblock" style="text-align: center"> 
@@ -158,7 +158,7 @@ serverPlugin {
        </div> 
       </div> 
       <div class="paragraph"> 
-       <p>The bottom line is that we <em>separated capabilities from conventions</em>. If a user decides that he doesn’t like the tasks created or doesn’t want to reconfigure a lot of the conventions because that’s not how the project structure looks like, then he can just fall back to applying the Java base plugin and take matters into his own hands.</p> 
+       <p>The bottom line is that we <em>separated capabilities from conventions</em>. If a user decides that he doesn’t like the tasks created or doesn’t want to reconfigure a lot of the conventions because that’s not how the project structure looks like, then he can just fall back to applying the Java Base plugin and take matters into his own hands.</p> 
       </div> 
       <div class="paragraph"> 
        <p>You should consider using the same technique when designing your own plugins. You can develop both plugins within the same project and ship their compiled classes and identifiers with the same binary artifact. The following code example show how to apply a plugin from another one, so-called plugin composition:</p> 
@@ -311,7 +311,7 @@ BUILD SUCCESSFUL</pre>
   </div> 
   <div id="footer"> 
    <div id="footer-text">
-     Last updated 2017-04-10 21:23:13 UTC 
+     Last updated 2017-04-12 15:12:39 UTC 
    </div> 
   </div>  
  </body>
