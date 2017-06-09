@@ -1,268 +1,274 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
- <head> 
-  <meta charset="utf-8"> 
-  <!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]--> 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-  <meta name="generator" content="Asciidoctor 1.5.3"> 
-  <title>Designing Gradle plugins</title> 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css"> 
-  <link rel="stylesheet" href="./coderay-asciidoctor.css"> 
-  <link rel="stylesheet" href="https://guides.gradle.org/asciidoctor.css"> 
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700|Source+Code+Pro:500"> 
-  <link rel="apple-touch-icon" sizes="180x180" href="https://guides.gradle.org/icon/apple-touch-icon.png"> 
-  <link rel="icon" type="image/png" href="https://guides.gradle.org/icon/favicon-32x32.png" sizes="32x32"> 
-  <link rel="icon" type="image/png" href="https://guides.gradle.org/icon/favicon-16x16.png" sizes="16x16"> 
-  <link rel="manifest" href="https://guides.gradle.org/icon/manifest.json"> 
-  <link rel="mask-icon" href="https://guides.gradle.org/icon/safari-pinned-tab.svg" color="#5bbad5"> 
-  <link rel="shortcut icon" href="https://guides.gradle.org/icon/favicon.ico"> 
-  <meta name="apple-mobile-web-app-title" content="Designing Gradle Plugins"> 
-  <meta name="application-name" content="Designing Gradle Plugins"> 
-  <meta name="msapplication-config" content="https://guides.gradle.org/icon/browserconfig.xml"> 
-  <meta name="theme-color" content="#ffffff"> 
-  <script defer src="https://guides.gradle.org/js/set-time-to-complete-text.js"></script> 
-  <script>
+<head>
+<meta charset="utf-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.3">
+<meta name="author" content="Benjamin Muschko">
+<title>Designing Gradle plugins</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="./coderay-asciidoctor.css">
+<link rel="stylesheet" href="https://guides.gradle.org/asciidoctor.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:300,400,700|Source+Code+Pro:500">
+<link rel="apple-touch-icon" sizes="180x180" href="https://guides.gradle.org/icon/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="https://guides.gradle.org/icon/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="https://guides.gradle.org/icon/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="https://guides.gradle.org/icon/manifest.json">
+<link rel="mask-icon" href="https://guides.gradle.org/icon/safari-pinned-tab.svg" color="#5bbad5">
+<link rel="shortcut icon" href="https://guides.gradle.org/icon/favicon.ico">
+<meta name="apple-mobile-web-app-title" content="Designing Gradle Plugins">
+<meta name="application-name" content="Designing Gradle Plugins">
+<meta name="msapplication-config" content="https://guides.gradle.org/icon/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+<script defer src="https://guides.gradle.org/js/set-time-to-complete-text.js"></script>
+<script>
   (function(i,s,o,g,r,a,m){i["GoogleAnalyticsObject"]=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
   m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
   })(window,document,"script","https://www.google-analytics.com/analytics.js","ga");
   ga("create", "UA-4207603-1", "auto");
   ga("send", "pageview");
-</script> 
- </head> 
- <body class="article toc2 toc-right"> 
-  <div id="header">
-   <div style="padding-top: 10px;">
-    <a href="https://guides.gradle.org"><img src="http://guides.gradle.org/gradle-guides.svg" alt=""></a>
-   </div> 
-   <h1>Designing Gradle plugins</h1> 
-   <div id="toc" class="toc2"> 
-    <div id="toctitle">
-     Table of Contents
-    </div> 
-    <ul class="sectlevel1"> 
-     <li><a href="#architecture">1. Architecture</a> 
-      <ul class="sectlevel2"> 
-       <li><a href="#reusable_logic_should_be_written_as_binary_plugin">1.1. Reusable logic should be written as binary plugin</a></li> 
-       <li><a href="#consider_the_impact_on_performance">1.2. Consider the impact on performance</a></li> 
-       <li><a href="#convention_over_configuration">1.3. Convention over configuration</a></li> 
-       <li><a href="#capabilities-vs-conventions">1.4. Capabilities vs. conventions</a></li> 
-      </ul> </li> 
-     <li><a href="#technologies">2. Technologies</a> 
-      <ul class="sectlevel2"> 
-       <li><a href="#prefer_using_a_statically_typed_language_to_implement_a_plugin">2.1. Prefer using a statically-typed language to implement a plugin</a></li> 
-       <li><a href="#restricting_the_plugin_implementation_to_gradle_s_public_api">2.2. Restricting the plugin implementation to Gradle’s public API</a></li> 
-       <li><a href="#minimizing_the_use_of_external_libraries">2.3. Minimizing the use of external libraries</a></li> 
-      </ul> </li> 
-     <li><a href="#summary">3. Summary</a></li> 
-     <li><a href="#next_steps">4. Next steps</a></li> 
-    </ul> 
-   </div> 
-  </div> 
-  <div id="content"> 
-   <div id="preamble"> 
-    <div class="sectionbody"> 
-     <div class="paragraph"> 
-      <p>For beginners to Gradle implementing plugins can look like a daunting task that includes many considerations and deep knowledge: organizing and structuring plugin logic, testing and debugging plugin code as well as publishing the plugin artifact to a repository for consumption. You can find answers to many of those questions in the <a href="https://gradle.org/docs#getting-started">Getting Started Guides for plugin development</a>.</p> 
-     </div> 
-     <div class="paragraph"> 
-      <p>This guide is the first installment of a series of topical guides with deep coverage on various aspects of Gradle plugin development. You will learn how to properly design Gradle plugins based on established practices and apply them to your own projects.</p> 
-     </div> 
-     <div class="paragraph"> 
-      <p>This guide assumes you have:</p> 
-     </div> 
-     <div class="ulist"> 
-      <ul> 
-       <li> <p>Basic understanding of software engineering practices</p> </li> 
-       <li> <p>Knowledge of Gradle fundamentals like project organization, task creation and configuration as well as the Gradle build lifecycle</p> </li> 
-      </ul> 
-     </div> 
-     <div class="paragraph"> 
-      <p>If you happen to be a beginner to Gradle please start by working through the <a href="https://gradle.org/docs#getting-started">Getting Started Guides on Gradle development</a> first while referencing the <a href="https://docs.gradle.org/current/userguide/userguide.html">Gradle User Manual</a> to go deeper.</p> 
-     </div> 
-    </div> 
-   </div> 
-   <div class="sect1"> 
-    <h2 id="architecture"><a class="anchor" href="#architecture"></a>1. Architecture</h2> 
-    <div class="sectionbody"> 
-     <div class="sect2"> 
-      <h3 id="reusable_logic_should_be_written_as_binary_plugin"><a class="anchor" href="#reusable_logic_should_be_written_as_binary_plugin"></a>1.1. Reusable logic should be written as binary plugin</h3> 
-      <div class="paragraph"> 
-       <p>The Gradle User Manual differentiates two types of plugins: <a href="https://docs.gradle.org/current/userguide/plugins.html#sec:types_of_plugins">script plugins and binary plugins</a>. Script plugins are basically just plain old Gradle build scripts with a different name. While script plugins have their place for organizing build logic in a Gradle project, it’s hard to keep them well-maintained, they are hard to test and you can’t define new reusable types in them.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p><a href="https://docs.gradle.org/current/userguide/plugins.html#sec:binary_plugins">Binary plugins</a> should be used whenever logic needs to be reused or shared across independent projects. They allow for properly structuring code into classes and packages, are cachable, can follow a versioning scheme to enable smooth upgrade procedures and are easily testable.</p> 
-      </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="consider_the_impact_on_performance"><a class="anchor" href="#consider_the_impact_on_performance"></a>1.2. Consider the impact on performance</h3> 
-      <div class="paragraph"> 
-       <p>As a developer of Gradle plugins you have full freedom in defining and organizing code. Any logic imaginable can be implemented. When designing Gradle plugins always be aware of the impact on the end user. Seemingly simple logic can have a considerable impact on the execution performance of a build. That’s especially the case when code of a plugin is executed during the <a href="https://docs.gradle.org/current/userguide/build_lifecycle.html#sec:build_phases">configuration phase of the build lifecycle</a> e.g. resolving dependencies by iterating over them, making HTTP calls or writing to files. The guide on <a href="https://guides.gradle.org/performance">Optimizing Gradle Build Performance</a> will give you additional code examples, pitfalls and recommendations.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>As you write plugin code ask yourself whether the code shouldn’t rather be run during the execution phase. If you suspect issues with your plugin code, try creating a <a href="https://gradle.com/scans/get-started">build scan</a> to identify bottlenecks. The <a href="https://github.com/gradle/gradle-profiler">Gradle profiler</a> can help with automating build scan generation and gathering more low-level information.</p> 
-      </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="convention_over_configuration"><a class="anchor" href="#convention_over_configuration"></a>1.3. Convention over configuration</h3> 
-      <div class="paragraph"> 
-       <p><a href="https://en.wikipedia.org/wiki/Convention_over_configuration">Convention over configuration</a> is a software engineering paradigm that allows a tool or framework to make an attempt at decreasing the number of decisions the user has to make without losing its flexibility. What does that mean for Gradle plugins? Gradle plugins can provide users with sensible defaults and standards (<em>conventions</em>) in a certain context. Let’s take the <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Java plugin</a> as an example.</p> 
-      </div> 
-      <div class="ulist"> 
-       <ul> 
-        <li> <p>It defines the directory <em>src/main/java</em> as the default source directory for compilation.</p> </li> 
-        <li> <p>The output directory for compiled source code and other artifacts (like the JAR file) is <em>build</em>.</p> </li> 
-       </ul> 
-      </div> 
-      <div class="paragraph"> 
-       <p>As long the user of the plugin does not prefer to use other conventions, no additional configuration is needed in the consuming build script. It simply works out-of-the-box. However, if the user prefers other standards, then the default conventions can be reconfigured. You get the best of both worlds.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>In practice you will find that most users are comfortable with the default conventions until there’s a good reason to change them e.g. if you have to work with a legacy project. When writing your own plugins, make sure that you pick sensible defaults. You can find out if you did pick sensible conventions for your plugin if you see that the majority of plugin consumers don’t have to reconfigure them.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>Let’s have a look at an example for conventions introduced by a plugin. The plugin retrieves information from a server by making HTTP calls. The default URL used by the plugin is configured to point to a server within an organization developing the plugin: <a href="http://www.myorg.com/server" class="bare">http://www.myorg.com/server</a>. A good way to make the default URL configurable is to introduce an <a href="https://docs.gradle.org/current/userguide/custom_plugins.html#sec:getting_input_from_the_build">extension</a>. An extension exposes a custom DSL for capturing user input that influence the runtime behavior. The following example shows such a custom DSL for the discussed example:</p> 
-      </div> 
-      <div class="listingblock"> 
-       <div class="title">
-        build.gradle
-       </div> 
-       <div class="content"> 
-        <pre class="CodeRay highlight"><code data-lang="groovy">apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.myorg.server</span><span class="delimiter">'</span></span>
+</script>
+</head>
+<body class="article toc2 toc-right">
+<div id="header"><div style="padding-top: 10px;"><a href="https://guides.gradle.org"><img src="http://guides.gradle.org/gradle-guides.svg" alt=""></a></div><h1>Designing Gradle plugins</h1>
+<div class="details">
+<span id="author" class="author">Benjamin Muschko</span><br>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#architecture">1. Architecture</a>
+<ul class="sectlevel2">
+<li><a href="#reusable_logic_should_be_written_as_binary_plugin">1.1. Reusable logic should be written as binary plugin</a></li>
+<li><a href="#consider_the_impact_on_performance">1.2. Consider the impact on performance</a></li>
+<li><a href="#convention_over_configuration">1.3. Convention over configuration</a></li>
+<li><a href="#capabilities-vs-conventions">1.4. Capabilities vs. conventions</a></li>
+</ul>
+</li>
+<li><a href="#technologies">2. Technologies</a>
+<ul class="sectlevel2">
+<li><a href="#prefer_using_a_statically_typed_language_to_implement_a_plugin">2.1. Prefer using a statically-typed language to implement a plugin</a></li>
+<li><a href="#restricting_the_plugin_implementation_to_gradle_s_public_api">2.2. Restricting the plugin implementation to Gradle’s public API</a></li>
+<li><a href="#minimizing_the_use_of_external_libraries">2.3. Minimizing the use of external libraries</a></li>
+</ul>
+</li>
+<li><a href="#summary">3. Summary</a></li>
+<li><a href="#next_steps">4. Next steps</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>For beginners to Gradle implementing plugins can look like a daunting task that includes many considerations and deep knowledge: organizing and structuring plugin logic, testing and debugging plugin code as well as publishing the plugin artifact to a repository for consumption. You can find answers to many of those questions in the <a href="https://gradle.org/docs#getting-started">Getting Started Guides for plugin development</a>.</p>
+</div>
+<div class="paragraph">
+<p>This guide is the first installment of a series of topical guides with deep coverage on various aspects of Gradle plugin development. You will learn how to properly design Gradle plugins based on established practices and apply them to your own projects.</p>
+</div>
+<div class="paragraph">
+<p>This guide assumes you have:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Basic understanding of software engineering practices</p>
+</li>
+<li>
+<p>Knowledge of Gradle fundamentals like project organization, task creation and configuration as well as the Gradle build lifecycle</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you happen to be a beginner to Gradle please start by working through the <a href="https://gradle.org/docs#getting-started">Getting Started Guides on Gradle development</a> first while referencing the <a href="https://docs.gradle.org/current/userguide/userguide.html">Gradle User Manual</a> to go deeper.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="architecture"><a class="anchor" href="#architecture"></a>1. Architecture</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="reusable_logic_should_be_written_as_binary_plugin"><a class="anchor" href="#reusable_logic_should_be_written_as_binary_plugin"></a>1.1. Reusable logic should be written as binary plugin</h3>
+<div class="paragraph">
+<p>The Gradle User Manual differentiates two types of plugins: <a href="https://docs.gradle.org/current/userguide/plugins.html#sec:types_of_plugins">script plugins and binary plugins</a>. Script plugins are basically just plain old Gradle build scripts with a different name. While script plugins have their place for organizing build logic in a Gradle project, it’s hard to keep them well-maintained, they are hard to test and you can’t define new reusable types in them.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.gradle.org/current/userguide/plugins.html#sec:binary_plugins">Binary plugins</a> should be used whenever logic needs to be reused or shared across independent projects. They allow for properly structuring code into classes and packages, are cachable, can follow a versioning scheme to enable smooth upgrade procedures and are easily testable.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="consider_the_impact_on_performance"><a class="anchor" href="#consider_the_impact_on_performance"></a>1.2. Consider the impact on performance</h3>
+<div class="paragraph">
+<p>As a developer of Gradle plugins you have full freedom in defining and organizing code. Any logic imaginable can be implemented. When designing Gradle plugins always be aware of the impact on the end user. Seemingly simple logic can have a considerable impact on the execution performance of a build. That’s especially the case when code of a plugin is executed during the <a href="https://docs.gradle.org/current/userguide/build_lifecycle.html#sec:build_phases">configuration phase of the build lifecycle</a> e.g. resolving dependencies by iterating over them, making HTTP calls or writing to files. The guide on <a href="https://guides.gradle.org/performance">Optimizing Gradle Build Performance</a> will give you additional code examples, pitfalls and recommendations.</p>
+</div>
+<div class="paragraph">
+<p>As you write plugin code ask yourself whether the code shouldn’t rather be run during the execution phase. If you suspect issues with your plugin code, try creating a <a href="https://gradle.com/scans/get-started">build scan</a> to identify bottlenecks. The <a href="https://github.com/gradle/gradle-profiler">Gradle profiler</a> can help with automating build scan generation and gathering more low-level information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="convention_over_configuration"><a class="anchor" href="#convention_over_configuration"></a>1.3. Convention over configuration</h3>
+<div class="paragraph">
+<p><a href="https://en.wikipedia.org/wiki/Convention_over_configuration">Convention over configuration</a> is a software engineering paradigm that allows a tool or framework to make an attempt at decreasing the number of decisions the user has to make without losing its flexibility. What does that mean for Gradle plugins? Gradle plugins can provide users with sensible defaults and standards (<em>conventions</em>) in a certain context. Let’s take the <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Java plugin</a> as an example.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It defines the directory <em>src/main/java</em> as the default source directory for compilation.</p>
+</li>
+<li>
+<p>The output directory for compiled source code and other artifacts (like the JAR file) is <em>build</em>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>As long the user of the plugin does not prefer to use other conventions, no additional configuration is needed in the consuming build script. It simply works out-of-the-box. However, if the user prefers other standards, then the default conventions can be reconfigured. You get the best of both worlds.</p>
+</div>
+<div class="paragraph">
+<p>In practice you will find that most users are comfortable with the default conventions until there’s a good reason to change them e.g. if you have to work with a legacy project. When writing your own plugins, make sure that you pick sensible defaults. You can find out if you did pick sensible conventions for your plugin if you see that the majority of plugin consumers don’t have to reconfigure them.</p>
+</div>
+<div class="paragraph">
+<p>Let’s have a look at an example for conventions introduced by a plugin. The plugin retrieves information from a server by making HTTP calls. The default URL used by the plugin is configured to point to a server within an organization developing the plugin: <a href="http://www.myorg.com/server" class="bare">http://www.myorg.com/server</a>. A good way to make the default URL configurable is to introduce an <a href="https://docs.gradle.org/current/userguide/custom_plugins.html#sec:getting_input_from_the_build">extension</a>. An extension exposes a custom DSL for capturing user input that influence the runtime behavior. The following example shows such a custom DSL for the discussed example:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.myorg.server</span><span class="delimiter">'</span></span>
 
 serverPlugin {
     url = <span class="string"><span class="delimiter">'</span><span class="content">http://localhost:8080/server</span><span class="delimiter">'</span></span>
-}</code></pre> 
-       </div> 
-      </div> 
-      <div class="paragraph"> 
-       <p>As you can see, the user only declares the "what" - the server the plugin should reach out to. The actual inner workings - the "how" - is completely hidden from the end user.</p> 
-      </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="capabilities-vs-conventions"><a class="anchor" href="#capabilities-vs-conventions"></a>1.4. Capabilities vs. conventions</h3> 
-      <div class="paragraph"> 
-       <p>The functionality brought in by a plugin can be extremely powerful but also very opinionated. That’s especially the case if a plugin predefines tasks and conventions that a project inherits automatically when applying it. Sometimes the reality that you - as plugin developer - chose for your users might simply look different than expected. For that very reason you need to make a plugin as flexible and configurable as possible.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>One way to provide these quality criteria is to separate capabilities from conventions. In practice that means separating general-purpose functionality from pre-configured, opinionated functionality. Let’s have a look at an example to explain this seemingly abstract concept. There are two Gradle core plugins that demonstrate the concept perfectly: the <a href="https://docs.gradle.org/current/userguide/standard_plugins.html#sec:base_plugins">Java Base plugin</a> and the <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Java plugin</a>.</p> 
-      </div> 
-      <div class="ulist"> 
-       <ul> 
-        <li> <p>The Java Base plugin just provided un-opinionated functionality and general purpose concepts. For example it formalized the concept of a SourceSet and introduces dependency management configurations. However, it doesn’t actually create tasks you’d use as a Java developer on a regular basis nor does it create instances of source set.</p> </li> 
-        <li> <p>The Java plugin applies the Java Base plugin internally and inherits all its functionality. On top it creates source set instances like <code>main</code> and <code>test</code>, creates tasks well-known to Java developers like <code>classes</code>, <code>jar</code> or <code>javadoc</code>. It also establishes a lifecycle between those tasks that make sense for the domain.</p> </li> 
-       </ul> 
-      </div> 
-      <div class="imageblock" style="text-align: center"> 
-       <div class="content"> 
-        <img src="images/java-plugin-composition.png" alt="java plugin composition"> 
-       </div> 
-      </div> 
-      <div class="paragraph"> 
-       <p>The bottom line is that we <em>separated capabilities from conventions</em>. If a user decides that he doesn’t like the tasks created or doesn’t want to reconfigure a lot of the conventions because that’s not how the project structure looks like, then he can just fall back to applying the Java Base plugin and take matters into his own hands.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>You should consider using the same technique when designing your own plugins. You can develop both plugins within the same project and ship their compiled classes and identifiers with the same binary artifact. The following code example show how to apply a plugin from another one, so-called plugin composition:</p> 
-      </div> 
-      <div class="listingblock"> 
-       <div class="title">
-        MyBasePlugin.java
-       </div> 
-       <div class="content"> 
-        <pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">MyBasePlugin</span> <span class="directive">extends</span> Plugin&lt;Project&gt; {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>As you can see, the user only declares the "what" - the server the plugin should reach out to. The actual inner workings - the "how" - is completely hidden from the end user.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="capabilities-vs-conventions"><a class="anchor" href="#capabilities-vs-conventions"></a>1.4. Capabilities vs. conventions</h3>
+<div class="paragraph">
+<p>The functionality brought in by a plugin can be extremely powerful but also very opinionated. That’s especially the case if a plugin predefines tasks and conventions that a project inherits automatically when applying it. Sometimes the reality that you - as plugin developer - chose for your users might simply look different than expected. For that very reason you need to make a plugin as flexible and configurable as possible.</p>
+</div>
+<div class="paragraph">
+<p>One way to provide these quality criteria is to separate capabilities from conventions. In practice that means separating general-purpose functionality from pre-configured, opinionated functionality. Let’s have a look at an example to explain this seemingly abstract concept. There are two Gradle core plugins that demonstrate the concept perfectly: the <a href="https://docs.gradle.org/current/userguide/standard_plugins.html#sec:base_plugins">Java Base plugin</a> and the <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Java plugin</a>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The Java Base plugin just provided un-opinionated functionality and general purpose concepts. For example it formalized the concept of a SourceSet and introduces dependency management configurations. However, it doesn’t actually create tasks you’d use as a Java developer on a regular basis nor does it create instances of source set.</p>
+</li>
+<li>
+<p>The Java plugin applies the Java Base plugin internally and inherits all its functionality. On top it creates source set instances like <code>main</code> and <code>test</code>, creates tasks well-known to Java developers like <code>classes</code>, <code>jar</code> or <code>javadoc</code>. It also establishes a lifecycle between those tasks that make sense for the domain.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock" style="text-align: center">
+<div class="content">
+<img src="images/java-plugin-composition.png" alt="java plugin composition">
+</div>
+</div>
+<div class="paragraph">
+<p>The bottom line is that we <em>separated capabilities from conventions</em>. If a user decides that he doesn’t like the tasks created or doesn’t want to reconfigure a lot of the conventions because that’s not how the project structure looks like, then he can just fall back to applying the Java Base plugin and take matters into his own hands.</p>
+</div>
+<div class="paragraph">
+<p>You should consider using the same technique when designing your own plugins. You can develop both plugins within the same project and ship their compiled classes and identifiers with the same binary artifact. The following code example show how to apply a plugin from another one, so-called plugin composition:</p>
+</div>
+<div class="listingblock">
+<div class="title">MyBasePlugin.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">MyBasePlugin</span> <span class="directive">extends</span> Plugin&lt;Project&gt; {
     <span class="directive">public</span> <span class="type">void</span> apply(Project project) {
         <span class="comment">// define capabilities</span>
     }
-}</code></pre> 
-       </div> 
-      </div> 
-      <div class="listingblock"> 
-       <div class="title">
-        MyPlugin.java
-       </div> 
-       <div class="content"> 
-        <pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">MyPlugin</span> <span class="directive">extends</span> Plugin&lt;Project&gt; {
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">MyPlugin.java</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">MyPlugin</span> <span class="directive">extends</span> Plugin&lt;Project&gt; {
     <span class="directive">public</span> <span class="type">void</span> apply(Project project) {
         project.getPlugins().apply(MyBasePlugin.class);
 
         <span class="comment">// define conventions</span>
     }
-}</code></pre> 
-       </div> 
-      </div> 
-      <div class="paragraph"> 
-       <p>Here are two open-source plugins that apply the concept for inspiration:</p> 
-      </div> 
-      <div class="ulist"> 
-       <ul> 
-        <li> <p><a href="https://github.com/bmuschko/gradle-docker-plugin#provided-plugins">Docker plugin</a></p> </li> 
-        <li> <p><a href="https://github.com/bmuschko/gradle-cargo-plugin#provided-plugins">Cargo plugin</a></p> </li> 
-       </ul> 
-      </div> 
-     </div> 
-    </div> 
-   </div> 
-   <div class="sect1"> 
-    <h2 id="technologies"><a class="anchor" href="#technologies"></a>2. Technologies</h2> 
-    <div class="sectionbody"> 
-     <div class="sect2"> 
-      <h3 id="prefer_using_a_statically_typed_language_to_implement_a_plugin"><a class="anchor" href="#prefer_using_a_statically_typed_language_to_implement_a_plugin"></a>2.1. Prefer using a statically-typed language to implement a plugin</h3> 
-      <div class="paragraph"> 
-       <p>Gradle doesn’t take a stance on the programming language you should chose for implementing a plugin. It’s a developer’s choice as long as the plugin binary can be executed on the JVM.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>It is recommended to use a statically-typed language like Java or Kotlin for implementing plugins to decrease the likelihood of binary incompatibilities. Should you decide on using Groovy for your plugin implementation then it is a good choice to use the annotation <a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/transform/CompileStatic.html">@groovy.transform.CompileStatic</a>.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>The recommendation to use a statically-typed language is independent from the language choice for writing tests for your plugin code. The use of dynamic Groovy and (its very capable testing and mocking frameworking) <a href="http://spockframework.org/spock/docs/1.1-rc-3/index.html">Spock</a> is a very viable and common option.</p> 
-      </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="restricting_the_plugin_implementation_to_gradle_s_public_api"><a class="anchor" href="#restricting_the_plugin_implementation_to_gradle_s_public_api"></a>2.2. Restricting the plugin implementation to Gradle’s public API</h3> 
-      <div class="paragraph"> 
-       <p>To be able to build a Gradle plugin you’ll need to tell your project to use a compile-time dependency on the Gradle API. Your build script would usually contain the following declaration:</p> 
-      </div> 
-      <div class="listingblock"> 
-       <div class="title">
-        build.gradle
-       </div> 
-       <div class="content"> 
-        <pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here are two open-source plugins that apply the concept for inspiration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://github.com/bmuschko/gradle-docker-plugin#provided-plugins">Docker plugin</a></p>
+</li>
+<li>
+<p><a href="https://github.com/bmuschko/gradle-cargo-plugin#provided-plugins">Cargo plugin</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="technologies"><a class="anchor" href="#technologies"></a>2. Technologies</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="prefer_using_a_statically_typed_language_to_implement_a_plugin"><a class="anchor" href="#prefer_using_a_statically_typed_language_to_implement_a_plugin"></a>2.1. Prefer using a statically-typed language to implement a plugin</h3>
+<div class="paragraph">
+<p>Gradle doesn’t take a stance on the programming language you should chose for implementing a plugin. It’s a developer’s choice as long as the plugin binary can be executed on the JVM.</p>
+</div>
+<div class="paragraph">
+<p>It is recommended to use a statically-typed language like Java or Kotlin for implementing plugins to decrease the likelihood of binary incompatibilities. Should you decide on using Groovy for your plugin implementation then it is a good choice to use the annotation <a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/transform/CompileStatic.html">@groovy.transform.CompileStatic</a>.</p>
+</div>
+<div class="paragraph">
+<p>The recommendation to use a statically-typed language is independent from the language choice for writing tests for your plugin code. The use of dynamic Groovy and (its very capable testing and mocking frameworking) <a href="http://spockframework.org/spock/docs/1.1-rc-3/index.html">Spock</a> is a very viable and common option.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="restricting_the_plugin_implementation_to_gradle_s_public_api"><a class="anchor" href="#restricting_the_plugin_implementation_to_gradle_s_public_api"></a>2.2. Restricting the plugin implementation to Gradle’s public API</h3>
+<div class="paragraph">
+<p>To be able to build a Gradle plugin you’ll need to tell your project to use a compile-time dependency on the Gradle API. Your build script would usually contain the following declaration:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
     compile gradleApi()
-}</code></pre> 
-       </div> 
-      </div> 
-      <div class="paragraph"> 
-       <p>It’s important to understand that this dependency includes the full Gradle runtime. For historical reasons, public and internal Gradle API have not be separated yet. We are planning to work on a new way to clearly <a href="https://github.com/gradle/gradle/issues/1156">distinguish and declare individual portions of the Gradle API</a>.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>To ensure the best backward and forward compatibility with other Gradle versions you should only use the public API. In most cases it will support the use case your are trying to support with your plugin. Keep in mind that internal APIs are subject to change and can easily break your plugin from one Gradle version to another. Please <a href="https://github.com/gradle/gradle/issues">open an issue on GitHub</a> if you are looking for a public API that is currently internal-only.</p> 
-      </div> 
-      <div class="paragraph"> 
-       <p>How do you know if a class is part of the public API? If you can find the class referenced in the <a href="https://docs.gradle.org/current/dsl/">DSL guide</a> or the <a href="https://docs.gradle.org/current/javadoc/">Javadocs</a> then you can safely assume that it is public. In the future, we are planning to clearly separate public from internal API which will allow end users to declare the relevant dependency in the build script. Please follow the corresponding <a href="https://github.com/gradle/gradle/issues/1156">issue on GitHub</a>.</p> 
-      </div> 
-     </div> 
-     <div class="sect2"> 
-      <h3 id="minimizing_the_use_of_external_libraries"><a class="anchor" href="#minimizing_the_use_of_external_libraries"></a>2.3. Minimizing the use of external libraries</h3> 
-      <div class="paragraph"> 
-       <p>As application developers we have become quite accustomed to the use of external libraries to avoid having to write fundamental functionality. You likely do not want to go without your beloved Guava or HttpClient library anymore. Keep in mind that some of the libraries might pull in a huge graph of transitive dependencies when declared through Gradle’s dependency management system. The dependency report does not render dependencies declared for the <code>classpath</code> configuration of the build script, effectively the classpath of the declared plugins and their transitive dependencies. However, you can call the help task <code>buildEnvironment</code> to render the full dependency graph. To demonstrate the functionality let’s assume the following build script:</p> 
-      </div> 
-      <div class="listingblock"> 
-       <div class="title">
-        build.gradle
-       </div> 
-       <div class="content"> 
-        <pre class="CodeRay highlight"><code data-lang="groovy">plugins {
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It’s important to understand that this dependency includes the full Gradle runtime. For historical reasons, public and internal Gradle API have not be separated yet. We are planning to work on a new way to clearly <a href="https://github.com/gradle/gradle/issues/1156">distinguish and declare individual portions of the Gradle API</a>.</p>
+</div>
+<div class="paragraph">
+<p>To ensure the best backward and forward compatibility with other Gradle versions you should only use the public API. In most cases it will support the use case your are trying to support with your plugin. Keep in mind that internal APIs are subject to change and can easily break your plugin from one Gradle version to another. Please <a href="https://github.com/gradle/gradle/issues">open an issue on GitHub</a> if you are looking for a public API that is currently internal-only.</p>
+</div>
+<div class="paragraph">
+<p>How do you know if a class is part of the public API? If you can find the class referenced in the <a href="https://docs.gradle.org/current/dsl/">DSL guide</a> or the <a href="https://docs.gradle.org/current/javadoc/">Javadocs</a> then you can safely assume that it is public. In the future, we are planning to clearly separate public from internal API which will allow end users to declare the relevant dependency in the build script. Please follow the corresponding <a href="https://github.com/gradle/gradle/issues/1156">issue on GitHub</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="minimizing_the_use_of_external_libraries"><a class="anchor" href="#minimizing_the_use_of_external_libraries"></a>2.3. Minimizing the use of external libraries</h3>
+<div class="paragraph">
+<p>As application developers we have become quite accustomed to the use of external libraries to avoid having to write fundamental functionality. You likely do not want to go without your beloved Guava or HttpClient library anymore. Keep in mind that some of the libraries might pull in a huge graph of transitive dependencies when declared through Gradle’s dependency management system. The dependency report does not render dependencies declared for the <code>classpath</code> configuration of the build script, effectively the classpath of the declared plugins and their transitive dependencies. However, you can call the help task <code>buildEnvironment</code> to render the full dependency graph. To demonstrate the functionality let’s assume the following build script:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
     id <span class="string"><span class="delimiter">'</span><span class="content">org.asciidoctor.gradle.asciidoctor</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.1</span><span class="delimiter">'</span></span>
-}</code></pre> 
-       </div> 
-      </div> 
-      <div class="paragraph"> 
-       <p>The output of the task clearly indicates the classpath of the <code>classpath</code> configuration:</p> 
-      </div> 
-      <div class="listingblock"> 
-       <div class="content"> 
-        <pre>$ gradle buildEnvironment
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output of the task clearly indicates the classpath of the <code>classpath</code> configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>$ gradle buildEnvironment
 
 :buildEnvironment
 
@@ -273,47 +279,49 @@ Root project
 classpath
 \--- org.asciidoctor:asciidoctor-gradle-plugin:1.5.1
 
-BUILD SUCCESSFUL</pre> 
-       </div> 
-      </div> 
-      <div class="paragraph"> 
-       <p>It’s important to understand that a Gradle plugin does not run in its own, isolated classloader. In turn those dependencies might conflict with other versions of the same library being resolved from other plugins and might lead to unexpected runtime behavior. When writing Gradle plugins consider if you really need a specific library or if you could just implement a simple method yourself. A future version of Gradle will introduce proper classpath isolation for plugins.</p> 
-      </div> 
-     </div> 
-    </div> 
-   </div> 
-   <div class="sect1"> 
-    <h2 id="summary"><a class="anchor" href="#summary"></a>3. Summary</h2> 
-    <div class="sectionbody"> 
-     <div class="paragraph"> 
-      <p>Designing the architecture of a plugin is an important and necessary step in the creation of a future-proof implementation. It’s crucial to remember the recipes and recommendations laid out in this guide before writing a single line of code. Now that you are equipped with good practices of plugin development, it’s time to apply those techniques to writing plugins.</p> 
-     </div> 
-     <div class="paragraph"> 
-      <p>Please let us know on the <a href="https://discuss.gradle.org/">Gradle forum</a> if you are still having difficulties understanding any of the covered design aspects. While writing plugins you found yourself applying a technique over and over again. Let us know!</p> 
-     </div> 
-     <div class="paragraph"> 
-      <p>Wrote an awesome plugin? Write a tweet to <a href="https://twitter.com/gradle">@gradle</a> with the link to the documentation or code.</p> 
-     </div> 
-    </div> 
-   </div> 
-   <div class="sect1"> 
-    <h2 id="next_steps"><a class="anchor" href="#next_steps"></a>4. Next steps</h2> 
-    <div class="sectionbody"> 
-     <div class="paragraph"> 
-      <p>Now that you’re familiar with the basics of designing Gradle plugins, you may be interested in:</p> 
-     </div> 
-     <div class="ulist"> 
-      <ul> 
-       <li> <p><a href="https://guides.gradle.org/implementing-gradle-plugins">Implementing Gradle plugins</a></p> </li> 
-      </ul> 
-     </div> 
-    </div> 
-   </div> 
-  </div> 
-  <div id="footer"> 
-   <div id="footer-text">
-     Last updated 2017-05-30 19:54:06 UTC 
-   </div> 
-  </div>  
- </body>
+BUILD SUCCESSFUL</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It’s important to understand that a Gradle plugin does not run in its own, isolated classloader. In turn those dependencies might conflict with other versions of the same library being resolved from other plugins and might lead to unexpected runtime behavior. When writing Gradle plugins consider if you really need a specific library or if you could just implement a simple method yourself. A future version of Gradle will introduce proper classpath isolation for plugins.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="summary"><a class="anchor" href="#summary"></a>3. Summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Designing the architecture of a plugin is an important and necessary step in the creation of a future-proof implementation. It’s crucial to remember the recipes and recommendations laid out in this guide before writing a single line of code. Now that you are equipped with good practices of plugin development, it’s time to apply those techniques to writing plugins.</p>
+</div>
+<div class="paragraph">
+<p>Please let us know on the <a href="https://discuss.gradle.org/">Gradle forum</a> if you are still having difficulties understanding any of the covered design aspects. While writing plugins you found yourself applying a technique over and over again. Let us know!</p>
+</div>
+<div class="paragraph">
+<p>Wrote an awesome plugin? Write a tweet to <a href="https://twitter.com/gradle">@gradle</a> with the link to the documentation or code.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="next_steps"><a class="anchor" href="#next_steps"></a>4. Next steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you’re familiar with the basics of designing Gradle plugins, you may be interested in:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://guides.gradle.org/implementing-gradle-plugins">Implementing Gradle plugins</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2017-06-09 07:36:17 UTC
+</div>
+</div>
+</body>
 </html>
