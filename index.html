@@ -137,7 +137,7 @@
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.myorg.server</span><span class="delimiter">'</span></span>
 
-serverPlugin {
+server {
     url = <span class="string"><span class="delimiter">'</span><span class="content">http://localhost:8080/server</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
@@ -178,7 +178,10 @@ serverPlugin {
 <div class="listingblock">
 <div class="title">MyBasePlugin.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">MyBasePlugin</span> <span class="directive">extends</span> Plugin&lt;Project&gt; {
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.gradle.api.Plugin</span>;
+<span class="keyword">import</span> <span class="include">org.gradle.api.Project</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MyBasePlugin</span> <span class="directive">implements</span> Plugin&lt;Project&gt; {
     <span class="directive">public</span> <span class="type">void</span> apply(Project project) {
         <span class="comment">// define capabilities</span>
     }
@@ -188,7 +191,10 @@ serverPlugin {
 <div class="listingblock">
 <div class="title">MyPlugin.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="directive">public</span> <span class="type">class</span> <span class="class">MyPlugin</span> <span class="directive">extends</span> Plugin&lt;Project&gt; {
+<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.gradle.api.Plugin</span>;
+<span class="keyword">import</span> <span class="include">org.gradle.api.Project</span>;
+
+<span class="directive">public</span> <span class="type">class</span> <span class="class">MyPlugin</span> <span class="directive">implements</span> Plugin&lt;Project&gt; {
     <span class="directive">public</span> <span class="type">void</span> apply(Project project) {
         project.getPlugins().apply(MyBasePlugin.class);
 
@@ -321,7 +327,7 @@ BUILD SUCCESSFUL</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2017-07-04 19:24:51 UTC
+Last updated 2017-07-07 11:56:42 UTC
 </div>
 </div>
 </body>
