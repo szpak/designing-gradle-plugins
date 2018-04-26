@@ -3,14 +3,14 @@
 <head><link crossorigin href="//assets.gradle.com" rel="preconnect">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato:400,400i">
 <link rel="stylesheet" href="https://guides.gradle.org/css/asciidoctor.css">
-<link rel="stylesheet" href="https://guides.gradle.org/css/docs-blue-theme-4.5.2.css">
+<link rel="stylesheet" href="https://guides.gradle.org/css/docs-blue-theme-4.7.css">
 <link rel="apple-touch-icon" sizes="180x180" href="https://guides.gradle.org/icon/apple-touch-icon.png">
 <link rel="icon" type="image/png" href="https://guides.gradle.org/icon/favicon-32x32.png" sizes="32x32">
 <link rel="icon" type="image/png" href="https://guides.gradle.org/icon/favicon-16x16.png" sizes="16x16">
 <link rel="manifest" href="https://guides.gradle.org/icon/manifest.json">
 <link rel="mask-icon" href="https://guides.gradle.org/icon/safari-pinned-tab.svg" color="#5bbad5">
 <link rel="shortcut icon" href="https://guides.gradle.org/icon/favicon.ico">
-<script defer src="https://guides.gradle.org/js/guides.js"></script>
+<script defer src="https://guides.gradle.org/js/guides-4.7.js"></script>
 <script defer src="https://guides.gradle.org/js/set-time-to-complete-text.js"></script>
 <script async src="https://guides.gradle.org/js/autotrack.js"></script>
 
@@ -21,7 +21,6 @@
 <meta name="author" content="Benjamin Muschko">
 <title>Designing Gradle plugins</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css">
-<link rel="stylesheet" href="./coderay-asciidoctor.css">
 </head>
 <body class="article">
 <header class="site-layout__header site-header" itemscope="itemscope" itemtype="https://schema.org/WPHeader">
@@ -173,10 +172,10 @@
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">apply <span class="key">plugin</span>: <span class="string"><span class="delimiter">'</span><span class="content">org.myorg.server</span><span class="delimiter">'</span></span>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">apply plugin: 'org.myorg.server'
 
 server {
-    url = <span class="string"><span class="delimiter">'</span><span class="content">http://localhost:8080/server</span><span class="delimiter">'</span></span>
+    url = 'http://localhost:8080/server'
 }</code></pre>
 </div>
 </div>
@@ -216,12 +215,12 @@ server {
 <div class="listingblock">
 <div class="title">MyBasePlugin.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.gradle.api.Plugin</span>;
-<span class="keyword">import</span> <span class="include">org.gradle.api.Project</span>;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import org.gradle.api.Plugin;
+import org.gradle.api.Project;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">MyBasePlugin</span> <span class="directive">implements</span> Plugin&lt;Project&gt; {
-    <span class="directive">public</span> <span class="type">void</span> apply(Project project) {
-        <span class="comment">// define capabilities</span>
+public class MyBasePlugin implements Plugin&lt;Project&gt; {
+    public void apply(Project project) {
+        // define capabilities
     }
 }</code></pre>
 </div>
@@ -229,14 +228,14 @@ server {
 <div class="listingblock">
 <div class="title">MyPlugin.java</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="keyword">import</span> <span class="include">org.gradle.api.Plugin</span>;
-<span class="keyword">import</span> <span class="include">org.gradle.api.Project</span>;
+<pre class="prettyprint highlight"><code class="language-java" data-lang="java">import org.gradle.api.Plugin;
+import org.gradle.api.Project;
 
-<span class="directive">public</span> <span class="type">class</span> <span class="class">MyPlugin</span> <span class="directive">implements</span> Plugin&lt;Project&gt; {
-    <span class="directive">public</span> <span class="type">void</span> apply(Project project) {
+public class MyPlugin implements Plugin&lt;Project&gt; {
+    public void apply(Project project) {
         project.getPlugins().apply(MyBasePlugin.class);
 
-        <span class="comment">// define conventions</span>
+        // define conventions
     }
 }</code></pre>
 </div>
@@ -280,7 +279,7 @@ server {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">dependencies {
     compile gradleApi()
 }</code></pre>
 </div>
@@ -303,8 +302,8 @@ server {
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">plugins {
-    id <span class="string"><span class="delimiter">'</span><span class="content">org.asciidoctor.gradle.asciidoctor</span><span class="delimiter">'</span></span> version <span class="string"><span class="delimiter">'</span><span class="content">1.5.1</span><span class="delimiter">'</span></span>
+<pre class="prettyprint highlight"><code class="language-groovy" data-lang="groovy">plugins {
+    id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
 }</code></pre>
 </div>
 </div>
@@ -368,6 +367,9 @@ BUILD SUCCESSFUL</pre>
 </div>
 </div>
 </div>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>prettyPrint()</script>
 <footer class="site-layout__footer site-footer" itemscope="itemscope" itemtype="https://schema.org/WPFooter">
     <nav class="site-footer__navigation" itemtype="https://schema.org/SiteNavigationElement">
         <section class="site-footer__links">
