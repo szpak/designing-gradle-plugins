@@ -1,9 +1,14 @@
 plugins {
     id "org.gradle.guides.topical" version "0.15.5"
     id "org.gradle.guides.test-jvm-code" version "0.15.5"
+    id "org.gradle.guides.ci.travis" version "0.15.5"
 }
 
 guide {
     repoPath 'gradle-guides/designing-gradle-plugins'
     mainAuthor 'Benjamin Muschko'
+}
+
+travis {
+    encryptedVariables.add "AadMFaLR04Zp5ItLoQS3Ge1x5URttPsQWPOIVpG4zy/F/P/HLxO6Ij4JCzofMzY4NaDila4HC76+05KDHm39+WY1WXnOzehUtK8wHui5Upc6PwKVpjks9mVvQcxmrL29pOoSJPt20Z5S/IWXUj4M5JhQMFm+K/2LWBXTkfidl+a4gF/IGw8E+C/Rpe+bMidqPtzsceq6zZQAMO639flQWM+RWBKNAVOz277+exj4pQfS8cgKiBvfQMvLulttRsQxXXjtUXNuH9AGzoRAy1TTnsFjzeRWXL1/iy5J1nnDOJLOl9h2rE0B8YN9bJ6Gwlco3EBVxm90URt/mRdS4MuM1W3QkvLXUL8UUOVyTePz+oP8FnA8aqpPWdXp6ZCPLgRnixzX4XYixmkGgJhVFpVOkJk2Ezfmkp7qvW4YJrPAniKqn/5i5PGVw4jWIQzN3CtOV9u7A/iGMZb+04Zc6NRrZrFViqKmfrXdMXBd7EvToYLMO13mKGV9L1UQRXsl87fciAAmyJCSOHny8okX2XMLHIGUpYx6fK/DgET4MtxzyPU6/6JLYCk+qge6hrJcrv0VSmAVciaRIQzcQmSrkOxPDh745pQlKuHnFugmaicgeMcviAB9wrVDrOxmuttDF5EhLzDiMygVULUzADVYrzF8SU1qO2+Wl1UD2shjyMDTOqI="
 }
