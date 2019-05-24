@@ -270,13 +270,13 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>As long the user of the plugin does not prefer to use other conventions, no additional configuration is needed in the consuming build script. It simply works out-of-the-box. However, if the user prefers other standards, then the default conventions can be reconfigured. You get the best of both worlds.</p>
+<p>As long as the user of the plugin does not prefer to use other conventions, no additional configuration is needed in the consuming build script. It simply works out-of-the-box. However, if the user prefers other standards, then the default conventions can be reconfigured. You get the best of both worlds.</p>
 </div>
 <div class="paragraph">
 <p>In practice you will find that most users are comfortable with the default conventions until there’s a good reason to change them e.g. if you have to work with a legacy project. When writing your own plugins, make sure that you pick sensible defaults. You can find out if you did pick sensible conventions for your plugin if you see that the majority of plugin consumers don’t have to reconfigure them.</p>
 </div>
 <div class="paragraph">
-<p>Let’s have a look at an example for conventions introduced by a plugin. The plugin retrieves information from a server by making HTTP calls. The default URL used by the plugin is configured to point to a server within an organization developing the plugin: <a href="http://www.myorg.com/server" class="bare">http://www.myorg.com/server</a>. A good way to make the default URL configurable is to introduce an <a href="https://docs.gradle.org/current/userguide/custom_plugins.html#sec:getting_input_from_the_build">extension</a>. An extension exposes a custom DSL for capturing user input that influence the runtime behavior. The following example shows such a custom DSL for the discussed example:</p>
+<p>Let’s have a look at an example for conventions introduced by a plugin. The plugin retrieves information from a server by making HTTP calls. The default URL used by the plugin is configured to point to a server within an organization developing the plugin: <a href="http://www.myorg.com/server" class="bare">http://www.myorg.com/server</a>. A good way to make the default URL configurable is to introduce an <a href="https://docs.gradle.org/current/userguide/custom_plugins.html#sec:getting_input_from_the_build">extension</a>. An extension exposes a custom DSL for capturing user input that influences the runtime behavior. The following example shows such a custom DSL for the discussed example:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -295,7 +295,7 @@ server {
 <div class="sect2">
 <h3 id="capabilities-vs-conventions"><a class="anchor" href="#capabilities-vs-conventions"></a><a class="link" href="#capabilities-vs-conventions">1.4. Capabilities vs. conventions</a></h3>
 <div class="paragraph">
-<p>The functionality brought in by a plugin can be extremely powerful but also very opinionated. That’s especially the case if a plugin predefines tasks and conventions that a project inherits automatically when applying it. Sometimes the reality that you - as plugin developer - chose for your users might simply look different than expected. For that very reason you need to make a plugin as flexible and configurable as possible.</p>
+<p>The functionality brought in by a plugin can be extremely powerful but also very opinionated. That’s especially the case if a plugin predefines tasks and conventions that a project inherits automatically when applying it. Sometimes the reality that you - as plugin developer - choose for your users might simply look different than expected. For that very reason you need to make a plugin as flexible and configurable as possible.</p>
 </div>
 <div class="paragraph">
 <p>One way to provide these quality criteria is to separate capabilities from conventions. In practice that means separating general-purpose functionality from pre-configured, opinionated functionality. Let’s have a look at an example to explain this seemingly abstract concept. There are two Gradle core plugins that demonstrate the concept perfectly: the <a href="https://docs.gradle.org/current/userguide/standard_plugins.html#sec:base_plugins">Java Base plugin</a> and the <a href="https://docs.gradle.org/current/userguide/java_plugin.html">Java plugin</a>.</p>
@@ -319,7 +319,7 @@ server {
 <p>The bottom line is that we <em>separated capabilities from conventions</em>. If a user decides that he doesn’t like the tasks created or doesn’t want to reconfigure a lot of the conventions because that’s not how the project structure looks like, then he can just fall back to applying the Java Base plugin and take matters into his own hands.</p>
 </div>
 <div class="paragraph">
-<p>You should consider using the same technique when designing your own plugins. You can develop both plugins within the same project and ship their compiled classes and identifiers with the same binary artifact. The following code example show how to apply a plugin from another one, so-called plugin composition:</p>
+<p>You should consider using the same technique when designing your own plugins. You can develop both plugins within the same project and ship their compiled classes and identifiers with the same binary artifact. The following code example shows how to apply a plugin from another one, so-called plugin composition:</p>
 </div>
 <div class="listingblock">
 <div class="title">MyBasePlugin.java</div>
@@ -350,7 +350,7 @@ public class MyPlugin implements Plugin&lt;Project&gt; {
 </div>
 </div>
 <div class="paragraph">
-<p>Here are two open-source plugins that apply the concept for inspiration:</p>
+<p>For inspiration, here are two open-source plugins that apply the concept:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -371,7 +371,7 @@ public class MyPlugin implements Plugin&lt;Project&gt; {
 <div class="sect2">
 <h3 id="prefer_using_a_statically_typed_language_to_implement_a_plugin"><a class="anchor" href="#prefer_using_a_statically_typed_language_to_implement_a_plugin"></a><a class="link" href="#prefer_using_a_statically_typed_language_to_implement_a_plugin">2.1. Prefer using a statically-typed language to implement a plugin</a></h3>
 <div class="paragraph">
-<p>Gradle doesn’t take a stance on the programming language you should chose for implementing a plugin. It’s a developer’s choice as long as the plugin binary can be executed on the JVM.</p>
+<p>Gradle doesn’t take a stance on the programming language you should choose for implementing a plugin. It’s a developer’s choice as long as the plugin binary can be executed on the JVM.</p>
 </div>
 <div class="paragraph">
 <p>It is recommended to use a statically-typed language like Java or Kotlin for implementing plugins to decrease the likelihood of binary incompatibilities. Should you decide on using Groovy for your plugin implementation then it is a good choice to use the annotation <a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/transform/CompileStatic.html">@groovy.transform.CompileStatic</a>.</p>
