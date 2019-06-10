@@ -374,7 +374,7 @@ public class MyPlugin implements Plugin&lt;Project&gt; {
 <p>Gradle doesn’t take a stance on the programming language you should choose for implementing a plugin. It’s a developer’s choice as long as the plugin binary can be executed on the JVM.</p>
 </div>
 <div class="paragraph">
-<p>It is recommended to use a statically-typed language like Java or Kotlin for implementing plugins to decrease the likelihood of binary incompatibilities. Should you decide on using Groovy for your plugin implementation then it is a good choice to use the annotation <a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/transform/CompileStatic.html">@groovy.transform.CompileStatic</a>.</p>
+<p>It is recommended to use a statically-typed language like Java or Kotlin for implementing plugins to decrease the likelihood of binary incompatibilities. Should you decide on using Groovy for your plugin implementation then it is a good choice to use the annotation <a href="https://docs.groovy-lang.org/latest/html/gapi/groovy/transform/CompileStatic.html">@groovy.transform.CompileStatic</a>.</p>
 </div>
 <div class="paragraph">
 <p>The recommendation to use a statically-typed language is independent from the language choice for writing tests for your plugin code. The use of dynamic Groovy and (its very capable testing and mocking framework) <a href="http://spockframework.org/spock/docs/1.1-rc-3/index.html">Spock</a> is a very viable and common option.</p>
